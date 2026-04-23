@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.prudviteja99.archivepackagemanager</id>
+  <name>Archive Package Manager</name>
+  <summary>Install and manage AppImage and tar.gz applications</summary>
+  <metadata_license>MIT</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>
+      Archive Package Manager (APM) lets you install, manage, and launch
+      applications distributed as AppImage or tar.gz archives. It automatically
+      extracts your packages, discovers executables and icons, and registers
+      each app as a proper desktop entry so it appears in your application launcher.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.prudviteja99.archivepackagemanager.desktop</launchable>
+  <url type="homepage">https://github.com/PrudviTeja99/ArchievePackageManger</url>
+  <releases>
+    <release version="1.0.0" date="2026-04-23"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

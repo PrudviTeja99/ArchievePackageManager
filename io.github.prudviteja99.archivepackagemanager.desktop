@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Archive Package Manager
+Comment=Install and manage AppImage and tar.gz applications
+Exec=archive-package-manager
+Icon=io.github.prudviteja99.archivepackagemanager
+Terminal=false
+Categories=Utility;PackageManager;
+Keywords=package;install;appimage;tar;manager;
+StartupNotify=true
