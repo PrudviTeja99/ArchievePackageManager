@@ -8,7 +8,6 @@ import subprocess
 
 class LibraryItemWidget(QtWidgets.QWidget):
     """A custom list item widget showing hover-reveal actions and a three-dots menu."""
-    open_requested = QtCore.pyqtSignal(str)          # exec_path
     edit_requested = QtCore.pyqtSignal(dict)         # full app dict
     delete_requested = QtCore.pyqtSignal(str, str, str)  # uuid, exec_path, name
     selection_changed = QtCore.pyqtSignal()          # emitted when checkbox toggled
@@ -47,14 +46,6 @@ class LibraryItemWidget(QtWidgets.QWidget):
 
         layout.addStretch()
 
-        # --- Hover-reveal "Open" button ---
-        self.open_btn = QtWidgets.QPushButton("Open")
-        self.open_btn.setObjectName("openBtn")
-        self.open_btn.setFixedHeight(32)
-        self.open_btn.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
-        self.open_btn.setVisible(False)
-        self.open_btn.clicked.connect(lambda: self.open_requested.emit(app['exec_path']))
-        layout.addWidget(self.open_btn)
 
         # --- Three-dots menu button ---
         self.menu_btn = QtWidgets.QPushButton("⋮")
@@ -74,13 +65,11 @@ class LibraryItemWidget(QtWidgets.QWidget):
         layout.addWidget(self.checkbox)
 
     def enterEvent(self, event):
-        self.open_btn.setVisible(True)
         self.menu_btn.setVisible(True)
         super().enterEvent(event)
 
     def leaveEvent(self, event):
         if not self._menu_open:
-            self.open_btn.setVisible(False)
             self.menu_btn.setVisible(False)
         super().leaveEvent(event)
 
@@ -99,7 +88,6 @@ class LibraryItemWidget(QtWidgets.QWidget):
 
         # After menu closes, check if mouse is still over this widget
         if not self.rect().contains(self.mapFromGlobal(QtGui.QCursor.pos())):
-            self.open_btn.setVisible(False)
             self.menu_btn.setVisible(False)
 
         if action == edit_action:
@@ -261,17 +249,6 @@ class ArchievePackageManager(QtWidgets.QDialog):
                 background-color: #2979ff;
                 border: 2px solid #2979ff;
                 image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwb2x5bGluZSBwb2ludHM9IjIwIDYgOSAxNyA0IDEyIi8+PC9zdmc+);
-            }
-            QPushButton#openBtn {
-                background-color: #2979ff;
-                color: white;
-                border-radius: 6px;
-                padding: 4px 14px;
-                font-weight: bold;
-                font-size: 12px;
-            }
-            QPushButton#openBtn:hover {
-                background-color: #448aff;
             }
             QPushButton#menuBtn {
                 background-color: transparent;
@@ -481,7 +458,7 @@ class ArchievePackageManager(QtWidgets.QDialog):
             
             # Create a custom widget to hold the icon, text, and right-aligned checkbox
             widget = LibraryItemWidget(app, item)
-            widget.open_requested.connect(self.launch_app)
+
             widget.edit_requested.connect(self.edit_app)
             widget.delete_requested.connect(self.delete_single_app)
             widget.selection_changed.connect(self.update_action_buttons)
@@ -505,12 +482,6 @@ class ArchievePackageManager(QtWidgets.QDialog):
         if hasattr(self, 'deleteBtn'):
             self.deleteBtn.setEnabled(any_checked)
 
-    def launch_app(self, exec_path):
-        """Launch the application asynchronously without blocking the manager."""
-        try:
-            subprocess.Popen([exec_path], start_new_session=True)
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Launch Error", f"Could not launch application:\n{e}")
 
     def edit_app(self, app):
         """Pre-fill the setup window with existing app data for editing."""
