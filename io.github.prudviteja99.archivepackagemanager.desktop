@@ -8,3 +8,4 @@ Terminal=false
 Categories=Utility;PackageManager;
 Keywords=package;install;appimage;tar;manager;
 StartupNotify=true
+StartupWMClass=ArchivePackageManager

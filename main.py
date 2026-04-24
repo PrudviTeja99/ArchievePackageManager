@@ -726,6 +726,8 @@ Categories=Utility;Application;
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("ArchivePackageManager")
+    # Required for Wayland taskbars to match the window to the .desktop entry
+    app.setDesktopFileName("io.github.prudviteja99.archivepackagemanager")
     window = ArchievePackageManager()
     window.show()
     sys.exit(app.exec())
