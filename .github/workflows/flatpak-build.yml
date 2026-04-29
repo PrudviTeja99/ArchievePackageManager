@@ -26,9 +26,9 @@ jobs:
 
       - name: Install Flatpak runtimes
         run: |
-          flatpak install -y flathub org.kde.Platform//6.7
-          flatpak install -y flathub org.kde.Sdk//6.7
-          flatpak install -y flathub com.riverbankcomputing.PyQt.BaseApp//6.7
+          flatpak install -y flathub org.kde.Platform//6.10
+          flatpak install -y flathub org.kde.Sdk//6.10
+          flatpak install -y flathub com.riverbankcomputing.PyQt.BaseApp//6.10
 
       - name: Clean, Build flatpak
         run: |
