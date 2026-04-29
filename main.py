@@ -667,11 +667,10 @@ Categories=Utility;Application;
                 f.write(desktop_content)
             # Make the .desktop file executable
             os.chmod(desktop_file, 0o755)
-            # Notify the desktop session so the launcher picks it up immediately
-            subprocess.run(
-                ['update-desktop-database', str(desktop_dir)],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            )
+            # Notify the desktop session so the launcher picks it up immediately.
+            # Inside a Flatpak sandbox update-desktop-database is not present;
+            # use flatpak-spawn --host to run it on the real host instead.
+            self._run_update_desktop_database(str(desktop_dir))
         except Exception as e:
             print(f"Error creating desktop entry: {e}")
 
@@ -687,12 +686,29 @@ Categories=Utility;Application;
         try:
             if desktop_file.exists():
                 os.remove(desktop_file)
-                subprocess.run(
-                    ['update-desktop-database', str(desktop_dir)],
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-                )
+                self._run_update_desktop_database(str(desktop_dir))
         except OSError:
             pass
+
+    def _run_update_desktop_database(self, desktop_dir):
+        """Run update-desktop-database on the host, working both inside and
+        outside a Flatpak sandbox."""
+        # Detect Flatpak sandbox by checking for the /.flatpak-info file.
+        in_flatpak = os.path.exists('/.flatpak-info')
+        try:
+            if in_flatpak:
+                # flatpak-spawn --host runs the command on the real host system.
+                subprocess.run(
+                    ['flatpak-spawn', '--host', 'update-desktop-database', desktop_dir],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                )
+            else:
+                subprocess.run(
+                    ['update-desktop-database', desktop_dir],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                )
+        except Exception as e:
+            print(f"[APM] update-desktop-database skipped: {e}")
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
