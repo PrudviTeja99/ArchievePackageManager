@@ -1,7 +1,12 @@
+name: Build & Release Flatpak
+
 on:
   push:
     tags:
       - "v*"
+
+permissions:
+  contents: write
 
 jobs:
   flatpak-build:
@@ -33,4 +38,10 @@ jobs:
         run: |
           flatpak build-bundle repo archivepackagemanager-${{ github.ref_name }}.flatpak io.github.prudviteja99.archivepackagemanager
       
-    
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: archivepackagemanager-${{ github.ref_name }}.flatpak
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
